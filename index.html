@@ -143,11 +143,17 @@
                         <p>📍 Los Ángeles, Biobío - Chile</p>
                     </div>
                 </div>
-                <form class="contact-form">
-                    <input type="text" placeholder="Nombre" required>
-                    <input type="email" placeholder="Email" required>
-                    <input type="tel" placeholder="Teléfono">
-                    <select required>
+                <!-- FormSubmit envía los datos a contacto@vyasa.cl (el Email Worker de Cloudflare
+                     lo reenvía a vyasa.spa@gmail.com y vya.grafica@gmail.com). El primer envío
+                     dispara un correo de activación de FormSubmit que hay que confirmar una vez. -->
+                <form class="contact-form" action="https://formsubmit.co/contacto@vyasa.cl" method="POST">
+                    <input type="hidden" name="_subject" value="Nuevo mensaje desde vyasa.cl">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+                    <input type="text" name="nombre" placeholder="Nombre" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="tel" name="telefono" placeholder="Teléfono">
+                    <select name="area" required>
                         <option value="" disabled selected>Área</option>
                         <option value="ventas">Ventas</option>
                         <option value="cobranzas">Cobranzas</option>
@@ -155,7 +161,7 @@
                         <option value="administracion">Administración</option>
                         <option value="consulta">Consulta General</option>
                     </select>
-                    <textarea placeholder="Mensaje" rows="5" required></textarea>
+                    <textarea name="mensaje" placeholder="Mensaje" rows="5" required></textarea>
                     <button type="submit" class="submit-button">Enviar Mensaje</button>
                 </form>
             </div>
@@ -642,10 +648,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Form submission
 const contactForm = document.querySelector('.contact-form');
-contactForm.addEventListener('submit', (e) => {
+// Se envía por la vía AJAX de FormSubmit: la persona se queda en la página
+// y el "gracias" solo aparece si el envío funcionó de verdad.
+contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    alert('Gracias por su mensaje. Nos pondremos en contacto pronto.');
-    contactForm.reset();
+    const boton = contactForm.querySelector('.submit-button');
+    boton.disabled = true;
+    boton.textContent = 'Enviando...';
+    try {
+        const respuesta = await fetch('https://formsubmit.co/ajax/contacto@vyasa.cl', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: new FormData(contactForm)
+        });
+        const datos = await respuesta.json();
+        if (!respuesta.ok || String(datos.success) !== 'true') throw new Error(datos.message);
+        alert('Gracias por su mensaje. Nos pondremos en contacto pronto.');
+        contactForm.reset();
+    } catch (error) {
+        alert('No se pudo enviar el mensaje. Por favor escríbanos a contacto@vyasa.cl o al WhatsApp +56 9 9593 1994.');
+    } finally {
+        boton.disabled = false;
+        boton.textContent = 'Enviar Mensaje';
+    }
 });
 
 // Animate service cards on scroll
