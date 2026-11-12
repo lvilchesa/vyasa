@@ -138,14 +138,10 @@
                     <h3>Estamos aquí para ayudarle</h3>
                     <p>Contáctenos para una consulta personalizada</p>
                     <div class="contact-details">
-                        <p>📧 contacto@vyasa.cl</p>
                         <p>💬 +56 9 9593 1994</p>
                         <p>📍 Los Ángeles, Biobío - Chile</p>
                     </div>
                 </div>
-                <!-- FormSubmit envía los datos a contacto@vyasa.cl (el Email Worker de Cloudflare
-                     lo reenvía a vyasa.spa@gmail.com y vya.grafica@gmail.com). El primer envío
-                     dispara un correo de activación de FormSubmit que hay que confirmar una vez. -->
                 <form class="contact-form" action="https://formsubmit.co/contacto@vyasa.cl" method="POST">
                     <input type="hidden" name="_subject" value="Nuevo mensaje desde vyasa.cl">
                     <input type="hidden" name="_template" value="table">
@@ -666,7 +662,7 @@ contactForm.addEventListener('submit', async (e) => {
         alert('Gracias por su mensaje. Nos pondremos en contacto pronto.');
         contactForm.reset();
     } catch (error) {
-        alert('No se pudo enviar el mensaje. Por favor escríbanos a contacto@vyasa.cl o al WhatsApp +56 9 9593 1994.');
+        alert('No se pudo enviar el mensaje. Por favor escríbanos al WhatsApp +56 9 9593 1994.');
     } finally {
         boton.disabled = false;
         boton.textContent = 'Enviar Mensaje';
